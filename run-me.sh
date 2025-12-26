@@ -11,5 +11,5 @@ fi
 
 #Upgrade the database
 if [ -f migrations/alembic.ini ] ; then
-  /home/$USER/.local/bin/uvuv run flask db upgrade
+  /home/$USER/.local/bin/uv run flask db upgrade
 fi
