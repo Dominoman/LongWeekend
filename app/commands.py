@@ -56,7 +56,7 @@ class DbUtils:
         # collect route rowids referenced by these itineraries
         route_rowids: set[int] = set()
         for it in itineraries:
-            for r in it.route:
+            for r in it.routes:
                 if getattr(r, "rowid", None) is not None:
                     route_rowids.add(r.rowid)
 
