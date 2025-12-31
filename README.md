@@ -5,6 +5,8 @@ ___
 
 ## TODO
 ___
-- CLI scanning
+- ~~CLI scanning~~
 - Web list
-- Deployment
+- ~~Deployment~~
+- Clean up
+- Email alert

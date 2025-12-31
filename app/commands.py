@@ -10,10 +10,11 @@ from dateutil.relativedelta import relativedelta
 from flask import current_app
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import select, func
 from tqdm import tqdm
 
 from app import db
-from app.models import Search, Itinerary, Route
+from app.models import Search, Itinerary, Route, t_itinerary2route
 from common.kiwi import Tequila, KIWI_DATETIME_FORMAT
 
 class RouteCache:
@@ -43,6 +44,51 @@ class DbUtils:
         self.db.session.commit()
         self.logger.info(f"Cleared {updated} active searches")
         return updated
+
+    def delete_search(self,search:Search)->None:
+        """
+        Deletes the given search and all related itineraries and unused routes from the database.
+        """
+        # gather itineraries for this search
+        itineraries = list(search.itineraries)
+        itinerary_rowids = [it.rowid for it in itineraries]
+
+        # collect route rowids referenced by these itineraries
+        route_rowids: set[int] = set()
+        for it in itineraries:
+            for r in it.route:
+                if getattr(r, "rowid", None) is not None:
+                    route_rowids.add(r.rowid)
+
+        # delete itineraries
+        for it in itineraries:
+            self.db.session.delete(it)
+
+        # for each referenced route, check if it will be orphaned after deletion
+        for route_rowid in route_rowids:
+            # count remaining links for this route excluding the itineraries we just deleted
+            remaining_count_stmt = (
+                select(func.count())
+                .select_from(t_itinerary2route)
+                .where(
+                    t_itinerary2route.c.route_id == route_rowid,
+                    t_itinerary2route.c.itinerary_id.notin_(itinerary_rowids),
+                )
+            )
+            remaining = self.db.session.execute(remaining_count_stmt).scalar_one()
+            if remaining == 0:
+                route_obj = self.db.session.get(Route, route_rowid)
+                if route_obj is not None:
+                    self.db.session.delete(route_obj)
+
+        # finally delete the search record and commit
+        self.db.session.delete(search)
+        self.db.session.commit()
+
+    def delete_notactual_searches(self):
+        searches=Search.query.filter_by(actual=0).all()
+        for search in searches:
+            self.delete_search(search)
 
 class SearchImporter:
     def __init__(self):
@@ -126,6 +172,8 @@ class SearchImporter:
 
     def insert_json(self,json_data: dict, url: str = "", timestamp: datetime = None, range_start: date = None,
                         range_end: date = None,actual:bool=True)->bool:
+        if json_data['_results'] == 0:
+            return False
         old_search=Search.query.filter_by(search_id=json_data["search_id"]).first()
         if old_search is not None:
             return False
@@ -175,6 +223,7 @@ def scan():
                     importer.insert_json(result, kiwi.search_url, datetime.now(),range_start=range_start, range_end=range_end)
                     break
         range_start=range_start+relativedelta(months=1,day=1)
+    # db_utils.delete_notactual_searches()
 
 @click.command('import_jsons',short_help='Reimport all json from tmo folder')
 @with_appcontext
@@ -193,7 +242,18 @@ def import_jsons():
             range_end = range_start + relativedelta(months=1, days=-1)
             importer.insert_json(data, timestamp=timestamp, range_start=range_start, range_end=range_end, actual=False)
 
+@click.command('cleanup', short_help='Delete all not actual searches and related records')
+@with_appcontext
+def cleanup():
+    db_utils=DbUtils(db,current_app.logger)
+    searches = Search.query.filter_by(actual=0)
+    pbar = tqdm(searches,desc="Delete unused searches", unit="search")
+    for search in pbar:
+        db_utils.delete_search(search)
+
+    db_utils.delete_notactual_searches()
 
 def register(app):
     app.cli.add_command(scan)
     app.cli.add_command(import_jsons)
+    app.cli.add_command(cleanup)

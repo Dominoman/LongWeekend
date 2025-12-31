@@ -1,4 +1,3 @@
-# coding: utf-8
 from . import db
 
 
@@ -113,4 +112,4 @@ class Search(db.Model):
     results = db.Column(db.Integer, nullable=False)
     actual = db.Column(db.Boolean, nullable=False, index=True)
 
-    itineraries = db.relationship('Itinerary', back_populates='search', cascade='all, delete-orphan')
+    itineraries = db.relationship('Itinerary', back_populates='search')
