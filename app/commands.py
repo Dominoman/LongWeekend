@@ -70,7 +70,7 @@ class DbUtils:
 
         self.db.session.delete(search)
         self.db.session.commit()
-        return 1, itinerary_result.rowcount(), route_result.rowcount(), itinerary2route_result.rowcount()
+        return 1, itinerary_result.rowcount, route_result.rowcount, itinerary2route_result.rowcount
 
 
     def delete_notactual_searches(self):
