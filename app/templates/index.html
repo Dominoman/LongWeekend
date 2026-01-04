@@ -10,10 +10,10 @@
             {% for itinerary in itineraries %}
             <div class="flight-block bg-white light-shadow p-24 br-10 mb-16" data-sal="slide-up" data-sal-duration="800" data-sal-delay="100" data-sal-easing="ease-in-out">
               <div class="flight-area">
-                <div class="airline-name"> <img src="{{ url_for('static', filename='img/icon-1.png') }}" alt="">
+                <div class="airline-name"> <img src="{{ url_for('static', filename='logos/'+logos[itinerary.firstairline]) }}" alt="">
                   <div>
-                    <h5 class="lightest-black mb-8">Feel Dubai Airline</h5>
-                    <h6 class="dark-gray">Boeing 777-90</h6>
+                    <h5 class="lightest-black mb-8"><!!- Feel Dubai Airline --></h5>
+                    <h6 class="dark-gray"><!-- Boeing 777-90 --></h6>
                   </div>
                 </div>
                 <div class="flight-detail">
@@ -38,7 +38,7 @@
                     <h5 class="color-black">{{ itinerary.price | punctuation}} HUF</h5>
                     <h6 class="dark-gray text-end">Price</h6>
                   </div>
-                  <a href="{{ itinerary.deep_link }}" class="cus-btn btn-sec">Book Now</a> </div>
+                  <a href="{{ itinerary.deep_link }}" target="_blank" class="cus-btn btn-sec">Book Now</a> </div>
               </div>
               <hr class="bg-light-gray mt-24 mb-24">
               <div class="d-flex justify-content-between align-items-center">
