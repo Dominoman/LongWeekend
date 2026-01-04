@@ -26,10 +26,22 @@ def configure_console_logging(app, level=logging.INFO):
     werkzeug_logger.setLevel(level)
     werkzeug_logger.addHandler(handler)
 
+def punctuation(value):
+    return '{:,.0f}'.format(value).replace(',', '.')
+
+def to_time(value):
+    """Convert a number of seconds to a formatted time string."""
+    value = int(value)
+    hours, remainder = divmod(value, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return f"{int(hours):02}:{int(minutes):02}"
+
 def create_app():
     app=Flask(__name__)
     app.config.from_object(Config)
     db.init_app(app)
+    app.jinja_env.filters['punctuation'] = punctuation
+    app.jinja_env.filters['to_time'] = to_time
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)

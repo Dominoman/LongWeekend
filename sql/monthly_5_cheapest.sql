@@ -30,7 +30,12 @@ SELECT
     cityTo,
     local_departure,
     local_arrival,
-    price
+    rlocal_departure,
+    rlocal_arrival,
+    price,
+    durationDeparture,
+    durationReturn,
+    nightsInDest
 FROM ranked_per_month
 WHERE month_rank <= 5
 ORDER BY month, price;

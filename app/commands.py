@@ -10,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 from flask import current_app
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import select, delete, exists
+from sqlalchemy import select, delete, exists, text
 from tqdm import tqdm
 
 from app import db
@@ -211,6 +211,7 @@ def scan():
                     importer.insert_json(result, kiwi.search_url, datetime.now(),range_start=range_start, range_end=range_end)
                     break
         range_start=range_start+relativedelta(months=1,day=1)
+    current_app.logger.info('Cleanup')
     db_utils.delete_notactual_searches()
     current_app.logger.info("Finished")
 
