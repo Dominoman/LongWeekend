@@ -35,7 +35,8 @@ SELECT
     price,
     durationDeparture,
     durationReturn,
-    nightsInDest
+    nightsInDest,
+    deep_link
 FROM ranked_per_month
 WHERE month_rank <= 5
 ORDER BY month, price;

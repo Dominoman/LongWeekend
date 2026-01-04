@@ -37,7 +37,9 @@ def to_time(value):
     return f"{int(hours):02}:{int(minutes):02}"
 
 def create_app():
-    app=Flask(__name__)
+    app=Flask(__name__,
+              static_url_path = '/longweekend/static',
+              static_folder = 'static')
     app.config.from_object(Config)
     db.init_app(app)
     app.jinja_env.filters['punctuation'] = punctuation
