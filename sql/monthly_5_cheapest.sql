@@ -23,6 +23,7 @@ ranked_per_month AS (
     FROM cheapest_per_destination
 )
 SELECT
+    rowid,
     month,
     flyFrom,
     flyTo,

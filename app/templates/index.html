@@ -61,10 +61,10 @@
               <hr class="bg-light-gray mt-24 mb-24">
               <div class="d-flex justify-content-between align-items-center">
                 <h5 class="color-black">{{ itinerary.local_departure[:10] }} - {{ itinerary.rlocal_departure[:10] }} ({{ itinerary.nightsInDest }} nights)</h5>
-                <div> <a href="https://www.mytrip.au/flight-listing.html#" class="accordion-button color-primary h5 collapsed" data-bs-toggle="collapse" data-bs-target="#flightDetail" aria-expanded="true"> <i class="fal fa-chevron-down color-primary "></i>&nbsp;Flight Detail</a> </div>
+                <div> <a href="#" class="accordion-button color-primary h5 collapsed" data-bs-toggle="collapse" data-bs-target="#flightDetail{{ itinerary.rowid }}" aria-expanded="true"> <i class="fal fa-chevron-down color-primary "></i>&nbsp;Flight Detail</a> </div>
               </div>
             </div>
-            <div id="flightDetail" class="accordion-collapse collapse mb-32" data-bs-parent="#accordionExample">
+            <div id="flightDetail{{ itinerary.rowid }}" class="accordion-collapse collapse mb-32" data-bs-parent="#accordionExample">
               <div class="row bg-white br-10 light-shadow p-24 m-0 align-items-center">
                 <div class="col-lg-3 col-sm-4">
                   <div class="time-detail">
