@@ -10,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 from flask import current_app
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import select, delete, exists, text
+from sqlalchemy import select, delete, exists
 from tqdm import tqdm
 
 from app import db
