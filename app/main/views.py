@@ -1,12 +1,13 @@
 import os
 
 from flask import render_template
-from sqlalchemy import text
+from sqlalchemy import text, func
 
 from common.apininja import Ninja
 from config import Config
 from . import main
 from .. import db
+from ..models import Search
 
 
 @main.route('/')
@@ -23,4 +24,7 @@ def test():
     for row in result:
         l=apininja.get_logo(row['firstairline'])
         logos[row['firstairline']]=os.path.basename(l['logo_url'])
-    return render_template('index.html',itineraries=result,logos=logos)
+    latest_ts = db.session.query(
+        func.max(Search.timestamp)
+    ).scalar()
+    return render_template('index.html',itineraries=result,logos=logos, latest_ts=latest_ts)

@@ -1,12 +1,13 @@
 WITH ranked_by_destination AS (
     SELECT
         *,
-        strftime('%Y-%m', local_departure) AS month,
         ROW_NUMBER() OVER (
-            PARTITION BY strftime('%Y-%m', local_departure), flyTo
+            PARTITION BY month, flyTo
             ORDER BY price ASC
         ) AS dest_rank
-    FROM itinerary
+    FROM itinerary as i
+    JOIN search s
+        ON i.search_id = s.rowid
 ),
 cheapest_per_destination AS (
     SELECT *
@@ -42,7 +43,10 @@ SELECT
         WHEN instr(airlines, ',') > 0
         THEN substr(airlines, 1, instr(airlines, ',') - 1)
         ELSE airlines
-    END as firstairline
+    END as firstairline,
+    currency,
+    fx_rate,
+    timestamp
 
 FROM ranked_per_month
 WHERE month_rank <= 5

@@ -1,4 +1,4 @@
-from sqlalchemy import Index,text
+from sqlalchemy import Index,text,Computed
 
 from . import db
 
@@ -7,7 +7,8 @@ class Itinerary(db.Model):
     __tablename__ = 'itinerary'
     __table_args__ = (
         db.UniqueConstraint('search_id', 'itinerary_id'),
-        db.Index('ix_itinerary_search_itinerary_id', 'search_id', 'itinerary_id')
+        db.Index('ix_itinerary_search_itinerary_id', 'search_id', 'itinerary_id'),
+        db.Index("idx_itinerary_month_flyto_price","month", "flyTo", "price")
     )
 
     rowid = db.Column(db.Integer, primary_key=True)
@@ -45,6 +46,7 @@ class Itinerary(db.Model):
     virtual_interlining = db.Column(db.Boolean, nullable=False)
     rlocal_departure = db.Column(db.DateTime)
     rlocal_arrival = db.Column(db.DateTime)
+    month = db.Column(db.Text(11),Computed("strftime('%Y-%m', local_departure)", persisted=True),nullable=False)
 
     search = db.relationship('Search', back_populates='itineraries')
     routes = db.relationship('Route', secondary='itinerary2route', back_populates='itineraries')
