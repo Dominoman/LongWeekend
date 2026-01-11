@@ -168,7 +168,8 @@ class SearchImporter:
         if timestamp is None:
             timestamp=datetime.now()
         new_search = Search(search_id=json_data["search_id"], url=url, timestamp=timestamp,
-                                results=json_data["_results"], range_start=range_start, range_end=range_end, actual=actual)
+                                results=json_data["_results"], range_start=range_start, range_end=range_end, actual=actual,
+                            currency=json_data["currency"], fx_rate=json_data["fx_rate"])
         db.session.add(new_search)
 
         for itinerary in json_data['data']:

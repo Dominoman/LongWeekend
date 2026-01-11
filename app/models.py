@@ -1,4 +1,4 @@
-from sqlalchemy import Index
+from sqlalchemy import Index,text
 
 from . import db
 
@@ -114,5 +114,7 @@ class Search(db.Model):
     range_end = db.Column(db.Date, nullable=False)
     results = db.Column(db.Integer, nullable=False)
     actual = db.Column(db.Boolean, nullable=False, index=True)
+    currency = db.Column(db.String(3), nullable=False, default="HUF", server_default=text("'HUF'"))
+    fx_rate = db.Column(db.Float, nullable=False, default=385.533292, server_default="385.533292")
 
     itineraries = db.relationship('Itinerary', back_populates='search')
