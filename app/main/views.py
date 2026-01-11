@@ -22,8 +22,11 @@ def test():
         sql = text(f.read())
     result=db.session.execute(sql).mappings().all()
     for row in result:
-        l=apininja.get_logo(row['firstairline'])
+        l=apininja.get_airline_logos(row['firstairline'])
         logos[row['firstairline']]=os.path.basename(l['logo_url'])
+        apininja.get_flag(row['countryFromCode'])
+        apininja.get_flag(row['countryToCode'])
+
     latest_ts = db.session.query(
         func.max(Search.timestamp)
     ).scalar()

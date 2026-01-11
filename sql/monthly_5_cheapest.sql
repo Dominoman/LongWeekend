@@ -30,6 +30,8 @@ SELECT
     flyTo,
     cityFrom,
     cityTo,
+    countryFromCode,
+    countryToCode,
     local_departure,
     local_arrival,
     rlocal_departure,

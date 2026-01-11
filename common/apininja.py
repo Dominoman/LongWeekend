@@ -57,7 +57,7 @@ class Ninja:
                 if chunk:
                     f.write(chunk)
 
-    def get_logo(self, airline_code:str, cached:bool=True)-> dict[str, str] | None:
+    def get_airline_logos(self, airline_code:str, cached:bool=True)-> dict[str, str] | None:
         """
         Fetches the logo URL for a given airline code.
 
@@ -98,3 +98,20 @@ class Ninja:
         else:
             raise Exception(f"Error fetching logo: {response.status_code} - {response.text}")
 
+    def get_flag(self,country_code:str,cached:bool=True):
+        if not os.path.exists(self.cache_dir):
+            os.makedirs(self.cache_dir)
+        cache_file = f"{self.cache_dir}/{country_code}.svg"
+        if cached:
+            if os.path.exists(cache_file):
+                return cache_file
+        response = requests.get(f"https://api.api-ninjas.com/v1/countryflag?country={country_code}",
+                                headers={'X-Api-Key': self.api_key})
+        if response.status_code == 200:
+            data = response.json()
+            flag_url = data["rectangle_image_url"]
+
+            self.download_url(flag_url, cache_file)
+            return cache_file
+        else:
+            raise Exception(f"Error fetching flag: {response.status_code} - {response.text}")
