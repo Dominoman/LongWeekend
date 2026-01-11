@@ -12,4 +12,3 @@ class Config:
     SAVEDIR = os.environ.get("SAVEDIR","")
     LOG_LEVEL = os.environ.get("LOG_LEVEL", "DEBUG")
     APININJASKEY = os.environ.get("APININJASKEY","not set")
-    LOGOS = os.environ.get("LOGOS","app/static/logos")

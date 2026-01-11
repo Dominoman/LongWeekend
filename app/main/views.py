@@ -1,5 +1,3 @@
-import os
-
 from flask import render_template
 from sqlalchemy import text, func
 
@@ -15,19 +13,22 @@ def index():
     return 'Sabai sabai'
 
 @main.route('/longweekend')
-def test():
+def longweekend():
     logos = {}
-    apininja=Ninja(Config.APININJASKEY,Config.LOGOS)
+    img_resources={}
+    apininja=Ninja(Config.APININJASKEY)
     with open("sql/monthly_5_cheapest.sql") as f:
         sql = text(f.read())
     result=db.session.execute(sql).mappings().all()
     for row in result:
         l=apininja.get_airline_logos(row['firstairline'])
-        logos[row['firstairline']]=os.path.basename(l['logo_url'])
-        apininja.get_flag(row['countryFromCode'])
-        apininja.get_flag(row['countryToCode'])
+        logos[row['firstairline']]=l['logo_url']
+        l=apininja.get_flag(row['countryFromCode'])
+        img_resources[row['countryFromCode']]=l
+        l=apininja.get_flag(row['countryToCode'])
+        img_resources[row['countryToCode']] = l
 
     latest_ts = db.session.query(
         func.max(Search.timestamp)
     ).scalar()
-    return render_template('index.html',itineraries=result,logos=logos, latest_ts=latest_ts)
+    return render_template('index.html',itineraries=result,logos=logos, latest_ts=latest_ts,img_resources=img_resources)
